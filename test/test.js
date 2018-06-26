@@ -73,6 +73,20 @@ describe('#findOrCreate()', () => {
 
   })
 
+  it('creates a new record when just the query is provided, using promises', done => {
+
+    Fruit.findOrCreate({ name: 'Pear', color: 'green' }, null, { status: true }).then((result) => {
+      expect(result.result.name).to.equal('Pear')
+      expect(result.result.color).to.equal('green')
+
+      expect(result.isNew).to.be.true
+      expect(result.wasUpdated).to.be.true
+
+      done()
+    })
+
+  })
+
   it('avoids trying to set mongo query keywords as fields', done => {
 
     Fruit.findOrCreate({ name: 'Watermelon', color: { $exists: true } }, (err, result) => {
@@ -191,24 +205,6 @@ describe('#findOrCreate()', () => {
 
         expect(result.name).to.equal('Pear')
         expect(result.slug).to.equal('my-super-long-pear-slug')
-
-        done()
-    })
-
-  })
-
-  it('does not save to an existing doc if saveIfFound is false', done => {
-
-    Fruit.findOrCreate(
-      { name: 'Grapefruit' },
-      { color: 'salmon' },
-      { saveIfFound: false },
-
-      (err, result) => {
-        expect(err).to.equal(null)
-
-        expect(result.name).to.equal('Grapefruit')
-        expect(result.color).not.to.equal('salmon')
 
         done()
     })
